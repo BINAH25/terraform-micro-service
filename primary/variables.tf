@@ -28,25 +28,30 @@ variable "map_public_ip_on_launch" {
   default = true
 }
 
+variable "cluster_name" {
+  type = string
+}
 
-# variable "alb_sg_name" {
-#   type = string
 
-# }
 
-# variable "ec2_sg_name" {
-#   type = string
+variable "frontend_alb_sg_name" {
+  type = string
 
-# }
+}
+
+variable "frontend_service_ecs_sg_name" {
+  type = string
+
+}
 
 # variable "db_sg_name" {
 #   type = string
 
 # }
 
-# variable "security_group_cidr" {
-#   type = string
-# }
+variable "security_group_cidr" {
+  type = string
+}
 
 # variable "db_username" {
 #   type = string
@@ -85,13 +90,13 @@ variable "map_public_ip_on_launch" {
 #   type = string
 # }
 
-# variable "domain_name" {
-#   type = string
-# }
+variable "domain_name" {
+  type = string
+}
 
-# variable "alternative_names" {
-#   type = list(string)
-# }
+variable "alternative_names" {
+  type = list(string)
+}
 
 # variable "instance_type" {
 #   type    = string
@@ -113,12 +118,12 @@ variable "map_public_ip_on_launch" {
 
 
 variable "ecr_repositories" {
-  type    = list(string)
+  type = list(string)
   default = [
     "admin-service",
     "admin-service-queue",
-    "user-service", 
-    "user-service-queue", 
+    "user-service",
+    "user-service-queue",
     "frontend-service"
   ]
 }
