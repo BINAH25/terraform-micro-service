@@ -38,7 +38,6 @@ module "acm_primary" {
 }
 
 
-
 # ecr repos creation
 module "ecr_repos" {
   source   = "../modules/ecr"
