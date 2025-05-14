@@ -155,9 +155,9 @@ resource "aws_vpc_security_group_ingress_rule" "allow_http_django_alb" {
   description       = "Allow remote HTTP from anywhere"
   security_group_id = aws_security_group.django_alb_sg.id
   cidr_ipv4         = var.security_group_cidr
-  from_port         = 80
+  from_port         = 8000
   ip_protocol       = "tcp"
-  to_port           = 80
+  to_port           = 8000
 
   tags = {
     Name = "Security Groups to allow HTTP(80)"
@@ -219,9 +219,9 @@ resource "aws_vpc_security_group_ingress_rule" "django_service_sg_ingress_rule1"
   description       = "Allow  HTTP from alb"
   security_group_id = aws_security_group.django_service_sg.id
   referenced_security_group_id = aws_security_group.django_alb_sg.id
-  from_port         = 80
+  from_port         = 8000
   ip_protocol       = "tcp"
-  to_port           = 80
+  to_port           = 8000
 
   tags = {
     Name = var.django_service_ecs_sg_name

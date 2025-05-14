@@ -7,7 +7,11 @@ variable "memory" { type = string }
 
 variable "container_name" { type = string }
 variable "container_image" { type = string }
-variable "container_port" { type = number }
+variable "container_port" {
+  description = "Port exposed by the container"
+  type        = number
+  default     = null
+}
 
 variable "subnets" { type = list(string) }
 variable "security_groups" { type = list(string) }

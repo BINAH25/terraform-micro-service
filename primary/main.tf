@@ -52,7 +52,7 @@ module "acm_django" {
   source = "../modules/acm"
 
   domain_name       = "djando.seyram.site"
-  alternative_names = ""
+  alternative_names = []
   hosted_zone_id    = module.djando_domain.hosted_zone_id
 }
 
@@ -168,7 +168,6 @@ module "django_queue" {
   memory               = "512"
   container_name       = "django-queue"
   container_image      = "${module.ecr_repos["admin-service-queue"].repository_url}:latest"
-  container_port       = ""
   cluster_id           = module.ecs_cluster.cluster_id
   subnets              = slice(module.vpc.micro_service_project_private_subnets, 0, 2)
   security_groups      = [module.security_group.django_service_sg_name]
@@ -176,5 +175,6 @@ module "django_queue" {
   enable_load_balancer = false
   aws_region           = var.region
   target_group_arn     = module.django_alb.target_group_arn
+  depends_on = [ module.django_service ]
 }
 
