@@ -16,6 +16,7 @@ module "security_group" {
   frontend_alb_sg_name         = var.frontend_alb_sg_name
   security_group_cidr          = var.security_group_cidr
   frontend_service_ecs_sg_name = var.frontend_service_ecs_sg_name
+  django_db_sg_name = var.django_db_sg_name
 }
 
 module "route53_main" {
@@ -37,6 +38,27 @@ module "acm_primary" {
   hosted_zone_id    = module.route53_main.hosted_zone_id
 }
 
+# Secret manager
+module "django_secret" {
+  source = "../modules/secret_manager"
+  secret_name = var.django_secret
+}
+
+# RDS POSTGRES
+module "django_db" {
+  source = "../modules/rds"
+  storage_type      = var.storage_type
+  db_engine         = "postgres"
+  db_subnet_name    = "micro-service-project-db-subnet-group"
+  db_identifier     = "postgres-db"
+  private_subnets   = slice(module.vpc.micro_service_project_private_subnets, 2, 4)
+  db_instance_class = var.db_instance_class
+  db_security_group = module.security_group.django_db_sg_name
+  db_name           = module.django_secret.db_name
+  db_password       = module.django_secret.db_password
+  db_username       = module.django_secret.db_username
+  secret_id = module.django_secret.secret_id
+}
 
 # ecr repos creation
 module "ecr_repos" {
@@ -48,7 +70,6 @@ module "ecr_repos" {
     Env     = "Dev"
   }
 }
-
 
 module "ecs_cluster" {
   source       = "../modules/ecs-cluster"

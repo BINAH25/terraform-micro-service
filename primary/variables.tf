@@ -44,6 +44,10 @@ variable "frontend_service_ecs_sg_name" {
 
 }
 
+variable "django_db_sg_name" {
+  type = string
+
+}
 # variable "db_sg_name" {
 #   type = string
 
@@ -53,38 +57,14 @@ variable "security_group_cidr" {
   type = string
 }
 
-# variable "db_username" {
-#   type = string
+variable "db_instance_class" {
+  type = string
+}
 
-# }
 
-# variable "db_password" {
-#   type = string
-
-# }
-# variable "db_name" {
-#   type = string
-# }
-
-# variable "db_instance_class" {
-#   type = string
-# }
-
-# variable "db_identifier" {
-#   type = string
-# }
-
-# variable "db_subnet_name" {
-#   type = string
-# }
-
-# variable "db_engine" {
-#   type = string
-# }
-
-# variable "storage_type" {
-#   type = string
-# }
+variable "storage_type" {
+  type = string
+}
 
 # variable "project_name" {
 #   type = string
@@ -126,4 +106,8 @@ variable "ecr_repositories" {
     "user-service-queue",
     "frontend-service"
   ]
+}
+
+variable "django_secret" {
+  type = string
 }

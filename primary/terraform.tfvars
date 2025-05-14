@@ -9,9 +9,14 @@ availability_zones  = ["us-east-2a", "us-east-2b"]
 frontend_alb_sg_name         = "frontend-alb-sg"
 security_group_cidr          = "0.0.0.0/0"
 frontend_service_ecs_sg_name = "frontend-service-sg"
-
+django_db_sg_name = "django-db-sg"
 cluster_name = "micro-service-cluster"
 
 #route53
 domain_name       = "seyram.site"
 alternative_names = ["www.seyram.site"]
+
+#RDS
+django_secret = "my-django-db-secret-us-east-2"
+db_instance_class = "db.t3.micro"
+storage_type      = "gp2"
