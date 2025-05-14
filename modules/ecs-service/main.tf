@@ -42,10 +42,11 @@ resource "aws_ecs_task_definition" "micro_service_td" {
     {
       name      = var.container_name
       image     = var.container_image
-      portMappings = [{
+      portMappings = var.container_port != null ? [{
         containerPort = var.container_port
         hostPort      = var.container_port
-      }]
+      }] : null
+
       environment = var.environment
       logConfiguration = {
         logDriver = "awslogs"
