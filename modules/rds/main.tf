@@ -29,9 +29,13 @@ resource "null_resource" "update_secret" {
   provisioner "local-exec" {
     command = <<EOT
     aws secretsmanager put-secret-value \
-    --secret-id ${var.secret_id} \
-    --secret-string '{"host":"${aws_db_instance.postgres.address}"}'
+      --secret-id ${var.secret_id} \
+      --secret-string '{"username":"${var.db_username}","password":"${var.db_password}","db_nanme":"${var.db_name}",
+       "port":"${var.db_port}",
+        "host":"${aws_db_instance.postgres.address}"
+      }'
     EOT
     interpreter = ["/bin/bash", "-c"]
   }
+  
 }

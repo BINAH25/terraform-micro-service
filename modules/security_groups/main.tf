@@ -135,3 +135,106 @@ resource "aws_vpc_security_group_egress_rule" "db_sg_egress_rule" {
     Name = "Allow all outbound"
   }
 }
+
+
+
+########################################### security group djago service ###########################
+# create alb security group
+resource "aws_security_group" "django_alb_sg" {
+  name        = var.django_alb_sg_name
+  description = "Enable https and http on Port (80 and 443)"
+  vpc_id      = var.vpc_id
+
+  tags = {
+    Name = var.django_alb_sg_name
+  }
+}
+
+# create ingress rule
+resource "aws_vpc_security_group_ingress_rule" "allow_http_django_alb" {
+  description       = "Allow remote HTTP from anywhere"
+  security_group_id = aws_security_group.django_alb_sg.id
+  cidr_ipv4         = var.security_group_cidr
+  from_port         = 80
+  ip_protocol       = "tcp"
+  to_port           = 80
+
+  tags = {
+    Name = "Security Groups to allow HTTP(80)"
+  }
+}
+# create ingress rule
+resource "aws_vpc_security_group_ingress_rule" "allow_https_django_alb" {
+  description       = "Allow remote HTTPS from anywhere"
+  security_group_id = aws_security_group.django_alb_sg.id
+  cidr_ipv4         = var.security_group_cidr
+  from_port         = 443
+  ip_protocol       = "tcp"
+  to_port           = 443
+
+  tags = {
+    Name = "Security Groups to allow HTTPS(443)"
+  }
+}
+
+# create egress rule
+resource "aws_vpc_security_group_egress_rule" "allow_all_outbound_alb_django" {
+  security_group_id = aws_security_group.django_alb_sg.id
+  cidr_ipv4         = var.security_group_cidr
+  ip_protocol       = "-1"
+
+  tags = {
+    Name = "Allow all outbound"
+  }
+}
+
+###############################
+# create django service ecs security group
+resource "aws_security_group" "django_service_sg" {
+  name        = var.django_service_ecs_sg_name
+  description = "Enable https from alb security group"
+  vpc_id      = var.vpc_id
+
+  tags = {
+    Name = var.django_service_ecs_sg_name
+  }
+}
+
+# create ingress rule
+resource "aws_vpc_security_group_ingress_rule" "django_service_sg_ingress_rule" {
+  description       = "Allow  HTTPS from alb"
+  security_group_id = aws_security_group.django_service_sg.id
+  referenced_security_group_id = aws_security_group.django_alb_sg.id
+  from_port         = 443
+  ip_protocol       = "tcp"
+  to_port           = 443
+
+  tags = {
+    Name = var.django_service_ecs_sg_name
+  }
+}
+
+# create ingress rule
+resource "aws_vpc_security_group_ingress_rule" "django_service_sg_ingress_rule1" {
+  description       = "Allow  HTTP from alb"
+  security_group_id = aws_security_group.django_service_sg.id
+  referenced_security_group_id = aws_security_group.django_alb_sg.id
+  from_port         = 80
+  ip_protocol       = "tcp"
+  to_port           = 80
+
+  tags = {
+    Name = var.django_service_ecs_sg_name
+  }
+}
+
+# create egress rule
+resource "aws_vpc_security_group_egress_rule" "django_service_sg_ingress_rule2" {
+  security_group_id = aws_security_group.django_service_sg.id
+  cidr_ipv4         = var.security_group_cidr
+  ip_protocol       = "-1"
+
+  tags = {
+    Name = "Allow all outbound"
+  }
+}

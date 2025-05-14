@@ -7,8 +7,10 @@ availability_zones  = ["us-east-2a", "us-east-2b"]
 
 #security group
 frontend_alb_sg_name         = "frontend-alb-sg"
+django_alb_sg_name   = "django-alb-sg"
 security_group_cidr          = "0.0.0.0/0"
 frontend_service_ecs_sg_name = "frontend-service-sg"
+django_service_ecs_sg_name = "django-service-sg" 
 django_db_sg_name = "django-db-sg"
 cluster_name = "micro-service-cluster"
 

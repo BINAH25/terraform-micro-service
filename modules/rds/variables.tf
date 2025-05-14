@@ -50,3 +50,6 @@ variable "secret_id" {
   type        = string
   description = "The ID of the secret to update after DB is created"
 }
+
+variable "db_port" {}
+  
