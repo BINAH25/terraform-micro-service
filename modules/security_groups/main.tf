@@ -88,7 +88,7 @@ resource "aws_vpc_security_group_ingress_rule" "frontend_service_sg_ingress_rule
 }
 
 # create egress rule
-resource "aws_vpc_security_group_egress_rule" "ec2_sg_egress_rule" {
+resource "aws_vpc_security_group_egress_rule" "frontend_service_sg_ingress_rule2" {
   security_group_id = aws_security_group.frontend_service_sg.id
   cidr_ipv4         = var.security_group_cidr
   ip_protocol       = "-1"
@@ -98,42 +98,40 @@ resource "aws_vpc_security_group_egress_rule" "ec2_sg_egress_rule" {
   }
 }
 
-# #############################################################
-# # create database security group
-# resource "aws_security_group" "db_sg" {
-#   name        = var.db_sg_name
-#   description = "Enable 5432 from ec2 security group"
-#   vpc_id      = var.vpc_id
+#############################################################
+# create database security group
+resource "aws_security_group" "django_db_sg" {
+  name        = var.django_db_sg_name
+  description = "Enable 5432 from ec2 security group"
+  vpc_id      = var.vpc_id
 
-#   tags = {
-#     Name = var.db_sg_name
-#   }
-# }
-
-
-# resource "aws_vpc_security_group_ingress_rule" "db_sg_ingress_rule" {
-#   description       = "Allow  HTTPS from alb"
-#   security_group_id = aws_security_group.db_sg.id
-#   referenced_security_group_id = aws_security_group.ec2_sg.id
-#   from_port         = 5432
-#   ip_protocol       = "tcp"
-#   to_port           = 5432
-
-#   tags = {
-#     Name = var.db_sg_name
-#   }
-# }
-
-# # create egress rule
-# resource "aws_vpc_security_group_egress_rule" "db_sg_egress_rule" {
-#   security_group_id = aws_security_group.db_sg.id
-#   referenced_security_group_id = aws_security_group.ec2_sg.id
-#   from_port         = 5432
-#   ip_protocol       = "tcp"
-#   to_port           = 5432
+  tags = {
+    Name = var.django_db_sg_name
+  }
+}
 
 
-#   tags = {
-#     Name = "Allow all outbound"
-#   }
-# }
+resource "aws_vpc_security_group_ingress_rule" "django_db_sg_ingress_rule" {
+  description       = "Allow  HTTPS from alb"
+  security_group_id = aws_security_group.django_db_sg.id
+  cidr_ipv4         = var.security_group_cidr
+  from_port         = 5432
+  ip_protocol       = "tcp"
+  to_port           = 5432
+
+  tags = {
+    Name = var.django_db_sg_name
+  }
+}
+
+# create egress rule
+resource "aws_vpc_security_group_egress_rule" "db_sg_egress_rule" {
+  security_group_id = aws_security_group.django_db_sg.id
+  cidr_ipv4         = var.security_group_cidr
+  ip_protocol       = "-1"
+
+
+  tags = {
+    Name = "Allow all outbound"
+  }
+}

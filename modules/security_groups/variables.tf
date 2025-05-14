@@ -13,10 +13,10 @@ variable "frontend_service_ecs_sg_name" {
   description = "name of the security group ec2"
 }
 
-# variable "db_sg_name" {
-#   type        = string
-#   description = "name of the security group database"
-# }
+variable "django_db_sg_name" {
+  type        = string
+  description = "name of the security group database"
+}
 
 
 variable "security_group_cidr" {
