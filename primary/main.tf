@@ -17,6 +17,8 @@ module "security_group" {
   security_group_cidr          = var.security_group_cidr
   frontend_service_ecs_sg_name = var.frontend_service_ecs_sg_name
   django_db_sg_name = var.django_db_sg_name
+  django_alb_sg_name = var.django_alb_sg_name
+  django_service_ecs_sg_name = var.django_service_ecs_sg_name
 }
 
 module "route53_main" {
@@ -30,6 +32,14 @@ module "route53_main" {
   health_check_fqdn   = module.frontend_alb.alb_dns_name
 }
 
+module "djando_domain" {
+  source = "../modules/subdomain"
+  domain_name = var.domain_name
+  subdomain = "djando.seyram.site"
+  alb_zone_id = module.django_alb.alb_zone_id
+  alb_dns_name = module.django_alb.alb_dns_name
+}
+
 module "acm_primary" {
   source = "../modules/acm"
 
@@ -37,6 +47,15 @@ module "acm_primary" {
   alternative_names = var.alternative_names
   hosted_zone_id    = module.route53_main.hosted_zone_id
 }
+
+module "acm_django" {
+  source = "../modules/acm"
+
+  domain_name       = "djando.seyram.site"
+  alternative_names = ""
+  hosted_zone_id    = module.djando_domain.hosted_zone_id
+}
+
 
 # Secret manager
 module "django_secret" {
@@ -58,6 +77,7 @@ module "django_db" {
   db_password       = module.django_secret.db_password
   db_username       = module.django_secret.db_username
   secret_id = module.django_secret.secret_id
+  db_port = module.django_secret.db_port
 }
 
 # ecr repos creation
@@ -87,6 +107,19 @@ module "frontend_alb" {
   acm_cert_arn      = module.acm_primary.acm_cert_arn
 }
 
+module "django_alb" {
+  source            = "../modules/alb"
+  name              = "my-django-alb"
+  security_groups   = [module.security_group.djando_alb_sg_name]
+  subnets           = module.vpc.micro_service_project_public_subnets
+  vpc_id            = module.vpc.micro_service_project_vpc
+  target_group_name = "my-djando-tg"
+  health_check_path = "/api/products"
+  acm_cert_arn      = module.acm_primary.acm_cert_arn
+}
+
+
+
 module "frontend" {
   source               = "../modules/ecs-service"
   name                 = "frontend"
@@ -105,4 +138,43 @@ module "frontend" {
   target_group_arn     = module.frontend_alb.target_group_arn
 }
 
+
+
+module "django_service" {
+  source               = "../modules/ecs-service"
+  name                 = "django"
+  family               = "admin-service-task"
+  cpu                  = "256"
+  memory               = "512"
+  container_name       = "django"
+  container_image      = "${module.ecr_repos["admin-service"].repository_url}:latest"
+  container_port       = 80
+  cluster_id           = module.ecs_cluster.cluster_id
+  subnets              = slice(module.vpc.micro_service_project_private_subnets, 0, 2)
+  security_groups      = [module.security_group.django_service_sg_name]
+  desired_count        = 1
+  enable_load_balancer = true
+  aws_region           = var.region
+  target_group_arn     = module.django_alb.target_group_arn
+}
+
+
+
+module "django_queue" {
+  source               = "../modules/ecs-service"
+  name                 = "django-queue"
+  family               = "admin-queue-service-task"
+  cpu                  = "256"
+  memory               = "512"
+  container_name       = "django-queue"
+  container_image      = "${module.ecr_repos["admin-service-queue"].repository_url}:latest"
+  container_port       = ""
+  cluster_id           = module.ecs_cluster.cluster_id
+  subnets              = slice(module.vpc.micro_service_project_private_subnets, 0, 2)
+  security_groups      = [module.security_group.django_service_sg_name]
+  desired_count        = 1
+  enable_load_balancer = false
+  aws_region           = var.region
+  target_group_arn     = module.django_alb.target_group_arn
+}
 

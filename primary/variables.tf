@@ -44,6 +44,17 @@ variable "frontend_service_ecs_sg_name" {
 
 }
 
+
+variable "django_alb_sg_name" {
+  type = string
+
+}
+
+variable "django_service_ecs_sg_name" {
+  type = string
+
+}
+
 variable "django_db_sg_name" {
   type = string
 

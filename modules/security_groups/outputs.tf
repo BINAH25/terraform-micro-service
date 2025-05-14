@@ -10,3 +10,13 @@ output "frontend_service_sg_name" {
 output "django_db_sg_name" {
   value = aws_security_group.django_db_sg.id
 }
+
+output "djando_alb_sg_name" {
+  value = aws_security_group.django_alb_sg.id
+
+}
+
+output "django_service_sg_name" {
+  value = aws_security_group.django_service_sg.id
+
+}
