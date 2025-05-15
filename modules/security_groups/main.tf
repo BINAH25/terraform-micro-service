@@ -160,6 +160,19 @@ resource "aws_vpc_security_group_ingress_rule" "allow_http_django_alb" {
   to_port           = 8000
 
   tags = {
+    Name = "Security Groups to allow HTTP(8000)"
+  }
+}
+
+resource "aws_vpc_security_group_ingress_rule" "allow_http_django_alb_80" {
+  description       = "Allow remote HTTP from anywhere"
+  security_group_id = aws_security_group.django_alb_sg.id
+  cidr_ipv4         = var.security_group_cidr
+  from_port         = 80
+  ip_protocol       = "tcp"
+  to_port           = 80
+
+  tags = {
     Name = "Security Groups to allow HTTP(80)"
   }
 }

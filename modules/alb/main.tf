@@ -53,19 +53,3 @@ resource "aws_lb_listener" "http_redirect" {
     }
   }
 }
-
-resource "aws_lb_listener" "http_redirect_8000" {
-  load_balancer_arn = aws_lb.micro_service_alb.arn
-  port              = "8000"
-  protocol          = "HTTP"
-
-  default_action {
-    type = "redirect"
-
-    redirect {
-      port        = "443"
-      protocol    = "HTTPS"
-      status_code = "HTTP_301"
-    }
-  }
-}
