@@ -35,7 +35,7 @@ module "route53_main" {
 module "djando_domain" {
   source = "../modules/subdomain"
   domain_name = var.domain_name
-  subdomain = "djando.seyram.site"
+  subdomain = "django.seyram.site"
   alb_zone_id = module.django_alb.alb_zone_id
   alb_dns_name = module.django_alb.alb_dns_name
 }
@@ -51,7 +51,7 @@ module "acm_primary" {
 module "acm_django" {
   source = "../modules/acm"
 
-  domain_name       = "djando.seyram.site"
+  domain_name       = "django.seyram.site"
   alternative_names = []
   hosted_zone_id    = module.djando_domain.hosted_zone_id
 }
@@ -114,8 +114,9 @@ module "django_alb" {
   subnets           = module.vpc.micro_service_project_public_subnets
   vpc_id            = module.vpc.micro_service_project_vpc
   target_group_name = "my-djando-tg"
+  target_group_port = 8000
   health_check_path = "/api/products"
-  acm_cert_arn      = module.acm_primary.acm_cert_arn
+  acm_cert_arn      = module.acm_django.acm_cert_arn
 }
 
 
@@ -148,7 +149,7 @@ module "django_service" {
   memory               = "512"
   container_name       = "django"
   container_image      = "${module.ecr_repos["admin-service"].repository_url}:latest"
-  container_port       = 80
+  container_port       = 8000
   cluster_id           = module.ecs_cluster.cluster_id
   subnets              = slice(module.vpc.micro_service_project_private_subnets, 0, 2)
   security_groups      = [module.security_group.django_service_sg_name]
@@ -156,6 +157,7 @@ module "django_service" {
   enable_load_balancer = true
   aws_region           = var.region
   target_group_arn     = module.django_alb.target_group_arn
+  depends_on = [ module.django_db ]
 }
 
 
