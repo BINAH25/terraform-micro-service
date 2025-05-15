@@ -30,7 +30,7 @@ resource "null_resource" "update_secret" {
     command = <<EOT
     aws secretsmanager put-secret-value \
       --secret-id ${var.secret_id} \
-      --secret-string '{"username":"${var.db_username}","password":"${var.db_password}","db_nanme":"${var.db_name}",
+      --secret-string '{"username":"${var.db_username}","password":"${var.db_password}","dbname":"${var.db_name}",
        "port":"${var.db_port}",
         "host":"${aws_db_instance.postgres.address}"
       }'

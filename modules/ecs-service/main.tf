@@ -68,6 +68,7 @@ resource "aws_ecs_service" "cluster_service" {
   task_definition = aws_ecs_task_definition.micro_service_td.arn
   launch_type     = "FARGATE"
   desired_count   = var.desired_count
+  enable_execute_command = true
 
   network_configuration {
     subnets         = var.subnets
@@ -90,3 +91,5 @@ resource "aws_ecs_service" "cluster_service" {
     aws_iam_role_policy_attachment.secrets_access
   ]
 }
+
+
