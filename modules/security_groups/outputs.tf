@@ -33,3 +33,8 @@ output "flask_service_sg_name" {
   value = aws_security_group.flask_service_sg.id
 
 }
+
+output "ec2_security_g_name" {
+  value = aws_security_group.ec2_sg.id
+
+}

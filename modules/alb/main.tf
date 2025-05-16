@@ -53,3 +53,4 @@ resource "aws_lb_listener" "http_redirect" {
     }
   }
 }
+

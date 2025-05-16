@@ -50,3 +50,8 @@ variable "security_group_cidr" {
   type        = string
   description = "cidr for the security group alb"
 }
+
+variable "ec2_sg_name" {
+  type        = string
+  description = "name of the security group ec2"
+}

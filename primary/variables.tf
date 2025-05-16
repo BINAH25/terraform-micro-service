@@ -97,23 +97,23 @@ variable "alternative_names" {
   type = list(string)
 }
 
-# variable "instance_type" {
-#   type    = string
-#   default = "t2.micro"
-# }
+variable "instance_type" {
+  type    = string
+  default = "t2.medium"
+}
 
-# variable "key_name" {
-#   type = string
-# }
+variable "key_name" {
+  type = string
+}
 
-# variable "instance_name" {
-#   type = string
-# }
+variable "instance_name" {
+  type = string
+}
 
-# variable "associate_public_ip_address" {
-#   type    = bool
-#   default = true
-# }
+variable "associate_public_ip_address" {
+  type    = bool
+  default = true
+}
 
 
 variable "ecr_repositories" {
@@ -133,4 +133,9 @@ variable "django_secret" {
 
 variable "flask_secret" {
   type = string
+}
+
+variable "ec2_sg_name" {
+  type = string
+
 }
