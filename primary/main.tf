@@ -22,6 +22,7 @@ module "security_group" {
   flask_alb_sg_name = var.flask_alb_sg_name
   flask_db_sg_name = var.flask_db_sg_name
   flask_service_ecs_sg_name = var.flask_service_ecs_sg_name
+  ec2_sg_name = var.ec2_sg_name
 }
 
 module "route53_main" {
@@ -123,6 +124,17 @@ module "flask_db" {
   db_port = module.flask_secret.db_port
 }
 
+module "ec2_grafana" {
+  
+  source = "../modules/ec2"
+  instance_name = var.instance_name
+  key_name = var.key_name
+  subnet_id = module.vpc.micro_service_project_public_subnets[0]
+  security_group_ids = [module.security_group.ec2_security_g_name]
+  associate_public_ip_address = var.associate_public_ip_address
+  user_data_install_docker = file("../scripts/install_docker.sh")
+}
+
 
 # ecr repos creation
 module "ecr_repos" {
@@ -168,7 +180,7 @@ module "django_alb" {
 module "flask_alb" {
   source            = "../modules/alb"
   name              = "my-flask-alb"
-  security_groups   = [module.security_group.djando_alb_sg_name]
+  security_groups   = [module.security_group.flask_alb_sg_name]
   subnets           = module.vpc.micro_service_project_public_subnets
   vpc_id            = module.vpc.micro_service_project_vpc
   target_group_name = "my-flask-tg"

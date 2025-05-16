@@ -26,3 +26,9 @@ django_secret = "my-django-db-secret-us-east-2"
 flask_secret = "my-flask-db-secret-us-east-2" 
 db_instance_class = "db.t3.micro"
 storage_type      = "gp2"
+
+
+# EC2 VARIABLES
+instance_name = "grafana-prometheus-ec2"
+key_name      = "jenkins"
+ec2_sg_name         = "grafana-prometheus-sg"

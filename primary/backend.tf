@@ -1,8 +1,8 @@
 terraform {
   backend "s3" {
-    bucket       = "micro-service-flask-django"
+    bucket       = "micro-service-flask-django-react"
     key          = "terraform.tfstate"
-    region       = "us-west-2"
+    region       = "us-east-2"
     encrypt      = true
     use_lockfile = true
   }
