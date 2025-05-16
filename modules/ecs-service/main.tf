@@ -23,11 +23,39 @@ resource "aws_iam_role_policy_attachment" "secrets_access" {
   policy_arn = "arn:aws:iam::aws:policy/SecretsManagerReadWrite"
 }
 
+resource "aws_iam_role_policy" "ecs_exec_inline" {
+  name = "${var.name}-ecs-exec"
+  role = aws_iam_role.ecs_task_execution.id
+
+  policy = jsonencode({
+    Version = "2012-10-17",
+    Statement = [
+      {
+        Effect = "Allow",
+        Action = [
+          "ssmmessages:CreateControlChannel",
+          "ssmmessages:CreateDataChannel",
+          "ssmmessages:OpenControlChannel",
+          "ssmmessages:OpenDataChannel",
+          "logs:DescribeLogGroups",
+          "logs:DescribeLogStreams",
+          "logs:GetLogEvents",
+          "logs:FilterLogEvents",
+          "ssm:DescribeSessions",
+          "ssm:GetConnectionStatus",
+          "ssm:StartSession",
+          "ssm:TerminateSession"
+        ],
+        Resource = "*"
+      }
+    ]
+  })
+}
+
 resource "aws_cloudwatch_log_group" "ecs_log_group" {
   name              = "/ecs/${var.name}"
   retention_in_days = 7
 }
-
 
 resource "aws_ecs_task_definition" "micro_service_td" {
   family                   = var.family
@@ -85,11 +113,10 @@ resource "aws_ecs_service" "cluster_service" {
     }
   }
 
- depends_on = [
+  depends_on = [
     aws_ecs_task_definition.micro_service_td,
     aws_iam_role_policy_attachment.ecs_task_execution_policies,
-    aws_iam_role_policy_attachment.secrets_access
+    aws_iam_role_policy_attachment.secrets_access,
+    aws_iam_role_policy.ecs_exec_inline
   ]
 }
-
-
