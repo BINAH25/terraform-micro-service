@@ -59,10 +59,22 @@ variable "django_db_sg_name" {
   type = string
 
 }
-# variable "db_sg_name" {
-#   type = string
 
-# }
+
+variable "flask_alb_sg_name" {
+  type = string
+
+}
+
+variable "flask_service_ecs_sg_name" {
+  type = string
+
+}
+
+variable "flask_db_sg_name" {
+  type = string
+
+}
 
 variable "security_group_cidr" {
   type = string
@@ -76,10 +88,6 @@ variable "db_instance_class" {
 variable "storage_type" {
   type = string
 }
-
-# variable "project_name" {
-#   type = string
-# }
 
 variable "domain_name" {
   type = string
@@ -120,5 +128,9 @@ variable "ecr_repositories" {
 }
 
 variable "django_secret" {
+  type = string
+}
+
+variable "flask_secret" {
   type = string
 }

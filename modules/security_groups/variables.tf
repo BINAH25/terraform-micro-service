@@ -19,12 +19,28 @@ variable "django_service_ecs_sg_name" {
   description = "name of the security group ec2"
 }
 
+variable "flask_service_ecs_sg_name" {
+  type        = string
+  description = "name of the security group ec2"
+}
+
 variable "django_db_sg_name" {
   type        = string
   description = "name of the security group database"
 }
 
+
+variable "flask_db_sg_name" {
+  type        = string
+  description = "name of the security group database"
+}
+
 variable "django_alb_sg_name" {
+  type        = string
+  description = "name of the security group database"
+}
+
+variable "flask_alb_sg_name" {
   type        = string
   description = "name of the security group database"
 }
