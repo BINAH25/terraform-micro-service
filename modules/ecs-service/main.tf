@@ -53,10 +53,9 @@ resource "aws_iam_role_policy" "ecs_exec_inline" {
 }
 
 resource "aws_cloudwatch_log_group" "ecs_log_group" {
-  name              = "/ecs/${var.name}"
+  name              = "/ecs/${var.name}/log-router"
   retention_in_days = 7
 }
-
 resource "aws_ecs_task_definition" "micro_service_td" {
   family                   = var.family
   cpu                      = var.cpu
@@ -67,6 +66,28 @@ resource "aws_ecs_task_definition" "micro_service_td" {
   task_role_arn            = aws_iam_role.ecs_task_execution.arn
 
   container_definitions = jsonencode([
+    # FireLens log router container
+    {
+      name      = "log-router"
+      image     = "grafana/fluent-bit-plugin-loki:latest"
+      essential = true
+      firelensConfiguration = {
+        type = "fluentbit"
+        options = {
+          enable-ecs-log-metadata = "true"
+        }
+      }
+      logConfiguration = {
+        logDriver = "awslogs"
+        options = {
+          awslogs-group         = "/ecs/${var.name}/log-router"
+          awslogs-region        = var.aws_region
+          awslogs-stream-prefix = "firelens"
+        }
+      }
+    },
+
+    # Your application container
     {
       name      = var.container_name
       image     = var.container_image
@@ -74,21 +95,28 @@ resource "aws_ecs_task_definition" "micro_service_td" {
         containerPort = var.container_port
         hostPort      = var.container_port
       }] : null
-
       environment = var.environment
+
       logConfiguration = {
-        logDriver = "awslogs"
+        logDriver = "awsfirelens"
         options = {
-          awslogs-group         = "/ecs/${var.name}"
-          awslogs-region        = var.aws_region
-          awslogs-stream-prefix = var.container_name
+          Name       = "loki" 
+          Host            = "loki.seyram.site"
+          Port            = "443"
+          tls          = "on"
+          uri        = "/loki/api/v1/push"
+          label_keys   = "$container_name,$ecs_task_definition,$source,$ecs_cluster"
+          remove_keys = "container_id,ecs_task_arn"
+          line_format = "key_value"
         }
       }
+      systemControls = []
     }
   ])
 
   depends_on = [aws_cloudwatch_log_group.ecs_log_group]
 }
+
 
 resource "aws_ecs_service" "cluster_service" {
   name            = var.name

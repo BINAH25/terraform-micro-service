@@ -24,6 +24,7 @@ alternative_names = ["www.seyram.site"]
 #RDS
 django_secret = "my-django-db-secret-us-east-2"
 flask_secret = "my-flask-db-secret-us-east-2" 
+loki_secret = "grafana-loki"
 db_instance_class = "db.t3.micro"
 storage_type      = "gp2"
 
