@@ -43,3 +43,8 @@ variable "log_group_name" {
   type        = string
   default     = ""
 }
+
+# variable "loki_url" {
+#   description = "url for loki"
+#   type        = string
+# }

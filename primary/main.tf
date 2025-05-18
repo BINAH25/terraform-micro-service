@@ -91,6 +91,11 @@ module "flask_secret" {
   secret_name = var.flask_secret
 }
 
+module "loki_secret" {
+  source = "../modules/secret_manager"
+  secret_name = var.flask_secret
+}
+
 # RDS POSTGRES
 module "django_db" {
   source = "../modules/rds"
@@ -133,6 +138,17 @@ module "ec2_grafana" {
   security_group_ids = [module.security_group.ec2_security_g_name]
   associate_public_ip_address = var.associate_public_ip_address
   user_data_install_docker = file("../scripts/install_docker.sh")
+}
+
+module "ec2_grafana_loki" {
+  
+  source = "../modules/ec2"
+  instance_name = "grafana-loki"
+  key_name = var.key_name
+  subnet_id = module.vpc.micro_service_project_public_subnets[0]
+  security_group_ids = [module.security_group.ec2_security_g_name]
+  associate_public_ip_address = var.associate_public_ip_address
+  user_data_install_docker = file("../scripts/loki.sh")
 }
 
 

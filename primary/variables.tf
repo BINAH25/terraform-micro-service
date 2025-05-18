@@ -135,6 +135,9 @@ variable "flask_secret" {
   type = string
 }
 
+variable "loki_secret" {
+  type = string
+}
 variable "ec2_sg_name" {
   type = string
 
