@@ -87,7 +87,6 @@ resource "aws_ecs_task_definition" "micro_service_td" {
       }
     },
 
-    # Your application container
     {
       name      = var.container_name
       image     = var.container_image
