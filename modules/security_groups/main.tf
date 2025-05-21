@@ -338,6 +338,19 @@ resource "aws_vpc_security_group_ingress_rule" "flask_db_sg_ingress_rule" {
   }
 }
 
+resource "aws_vpc_security_group_ingress_rule" "flask_db_sg_ingress_rule1" {
+  description       = "Allow  HTTPS from alb"
+  security_group_id = aws_security_group.flask_db_sg.id
+  referenced_security_group_id = aws_security_group.flask_db_sg.id
+  from_port         = 3306
+  ip_protocol       = "tcp"
+  to_port           = 3306
+
+  tags = {
+    Name = var.flask_db_sg_name
+  }
+}
+
 # create egress rule
 resource "aws_vpc_security_group_egress_rule" "flask_db_sg_egress_rule" {
   security_group_id = aws_security_group.flask_db_sg.id
@@ -369,6 +382,19 @@ resource "aws_vpc_security_group_ingress_rule" "django_db_sg_ingress_rule" {
   description       = "Allow  HTTPS from alb"
   security_group_id = aws_security_group.django_db_sg.id
   referenced_security_group_id = aws_security_group.django_service_sg.id
+  from_port         = 5432
+  ip_protocol       = "tcp"
+  to_port           = 5432
+
+  tags = {
+    Name = var.django_db_sg_name
+  }
+}
+
+resource "aws_vpc_security_group_ingress_rule" "django_db_sg_ingress_rule2" {
+  description       = "Allow  HTTPS from alb"
+  security_group_id = aws_security_group.django_db_sg.id
+  referenced_security_group_id = aws_security_group.django_db_sg.id
   from_port         = 5432
   ip_protocol       = "tcp"
   to_port           = 5432

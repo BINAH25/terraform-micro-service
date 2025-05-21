@@ -111,10 +111,11 @@ module "django_db" {
   db_username       = module.django_secret.db_username
   secret_id = module.django_secret.secret_id
   db_port = module.django_secret.db_port
+  engine_family = "POSTGRESQL"
 }
 
 module "flask_db" {
-  source = "../modules/rds"
+  source = "../modules/mysql"
   storage_type      = var.storage_type
   db_engine         = "mysql"
   db_subnet_name    = "micro-service-project-flask-db-subnet-group"
@@ -201,7 +202,7 @@ module "flask_alb" {
   vpc_id            = module.vpc.micro_service_project_vpc
   target_group_name = "my-flask-tg"
   target_group_port = 5000
-  health_check_path = "/flask/api/products"
+  health_check_path = "/ready"
   acm_cert_arn      = module.acm_flask.acm_cert_arn
 }
 
