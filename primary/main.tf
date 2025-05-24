@@ -111,7 +111,6 @@ module "django_db" {
   db_username       = module.django_secret.db_username
   secret_id = module.django_secret.secret_id
   db_port = module.django_secret.db_port
-  engine_family = "POSTGRESQL"
 }
 
 module "flask_db" {

@@ -71,7 +71,7 @@ resource "aws_db_proxy" "postgres_proxy" {
   role_arn               = aws_iam_role.rds_proxy_secrets_manager_role.arn
   vpc_subnet_ids         = var.private_subnets
   vpc_security_group_ids = [var.db_security_group]
-  engine_family          = var.engine_family
+  engine_family          =  "POSTGRESQL"
 
   auth {
     auth_scheme = "SECRETS"
