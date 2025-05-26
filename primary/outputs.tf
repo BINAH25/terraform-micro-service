@@ -28,3 +28,7 @@ output "postgres_db_instance_arn" {
 output "mysql_db_instance_arn" {
   value = module.flask_db.db_instance_arn
 }
+
+output "health_check_id" {
+  value = module.route53_main.health_check_id
+}

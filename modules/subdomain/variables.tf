@@ -17,3 +17,17 @@ variable "alb_zone_id" {
   description = "Zone ID of the ALB"
   type        = string
 }
+variable "failover_role" {
+  type    = string
+  default = "PRIMARY" 
+}
+
+variable "create_health_check" {
+  type    = bool
+  default = true
+}
+
+variable "health_check_fqdn" {
+  type    = string
+  default = ""
+}

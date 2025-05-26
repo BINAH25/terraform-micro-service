@@ -187,3 +187,9 @@ module "flask_queue" {
   target_group_arn     = module.flask_alb.target_group_arn
   depends_on = [ module.flask_service ]
 }
+
+
+module "monitoring_primary" {
+  source = "../modeules/monitoring"
+  health_check_id = data.terraform_remote_state.primary.outputs.health_check_id
+}

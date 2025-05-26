@@ -42,6 +42,9 @@ module "djando_domain" {
   subdomain = "django.seyram.site"
   alb_zone_id = module.django_alb.alb_zone_id
   alb_dns_name = module.django_alb.alb_dns_name
+  create_health_check = true
+  failover_role       = "PRIMARY"
+  health_check_fqdn   = module.frontend_alb.alb_dns_name
 }
 
 module "flask_domain" {
@@ -50,6 +53,9 @@ module "flask_domain" {
   subdomain = "flask.seyram.site"
   alb_zone_id = module.flask_alb.alb_zone_id
   alb_dns_name = module.flask_alb.alb_dns_name
+  create_health_check = true
+  failover_role       = "PRIMARY"
+  health_check_fqdn   = module.frontend_alb.alb_dns_name
 }
 
 # create certificate for root and subdomain
