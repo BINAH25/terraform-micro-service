@@ -102,13 +102,7 @@ variable "instance_type" {
   default = "t2.medium"
 }
 
-variable "key_name" {
-  type = string
-}
 
-variable "instance_name" {
-  type = string
-}
 
 variable "associate_public_ip_address" {
   type    = bool
@@ -135,9 +129,6 @@ variable "flask_secret" {
   type = string
 }
 
-variable "loki_secret" {
-  type = string
-}
 variable "ec2_sg_name" {
   type = string
 

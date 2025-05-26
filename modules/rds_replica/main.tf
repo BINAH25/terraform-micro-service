@@ -11,3 +11,23 @@ resource "aws_db_instance" "replica" {
   vpc_security_group_ids  = [var.db_security_group]
   skip_final_snapshot     = true
 }
+
+
+resource "null_resource" "update_secret" {
+  triggers = {
+    db_host = aws_db_instance.replica.address
+  }
+
+  provisioner "local-exec" {
+    command = <<EOT
+    aws secretsmanager put-secret-value \
+      --region ${var.region} --secret-id ${var.secret_id} \
+      --secret-string '{"username":"${var.db_username}","password":"${var.db_password}","dbname":"${var.db_name}",
+       "port":"${var.db_port}",
+        "host":"${aws_db_instance.replica.address}"
+      }'
+    EOT
+    interpreter = ["/bin/bash", "-c"]
+  }
+  
+}

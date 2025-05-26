@@ -20,3 +20,11 @@ output "private_subnets_db" {
 output "private_subnets_app" {
   value = slice(module.vpc.micro_service_project_private_subnets, 0, 2)
 }
+
+output "postgres_db_instance_arn" {
+  value = module.django_db.db_instance_arn
+}
+
+output "mysql_db_instance_arn" {
+  value = module.flask_db.db_instance_arn
+}
