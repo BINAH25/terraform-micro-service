@@ -227,6 +227,7 @@ module "frontend" {
   security_groups      = [module.security_group.frontend_service_sg_name]
   desired_count        = 1
   enable_load_balancer = true
+  secret_name = ""
   aws_region           = var.region
   target_group_arn     = module.frontend_alb.target_group_arn
 }
@@ -248,6 +249,7 @@ module "django_service" {
   desired_count        = 1
   enable_load_balancer = true
   aws_region           = var.region
+  secret_name = var.django_secret
   target_group_arn     = module.django_alb.target_group_arn
   depends_on = [ module.django_db ]
 }
@@ -268,6 +270,7 @@ module "django_queue" {
   desired_count        = 1
   enable_load_balancer = false
   aws_region           = var.region
+  secret_name = var.django_secret
   target_group_arn     = module.django_alb.target_group_arn
   depends_on = [ module.django_service ]
 }
@@ -288,6 +291,7 @@ module "flask_service" {
   desired_count        = 1
   enable_load_balancer = true
   aws_region           = var.region
+  secret_name = var.flask_secret
   target_group_arn     = module.flask_alb.target_group_arn
   depends_on = [ module.flask_db ]
 }
@@ -307,6 +311,7 @@ module "flask_queue" {
   desired_count        = 1
   enable_load_balancer = false
   aws_region           = var.region
+  secret_name = var.flask_secret
   target_group_arn     = module.flask_alb.target_group_arn
   depends_on = [ module.flask_service ]
 }

@@ -94,7 +94,19 @@ resource "aws_ecs_task_definition" "micro_service_td" {
         containerPort = var.container_port
         hostPort      = var.container_port
       }] : null
-      environment = var.environment
+      environment = concat(
+        var.environment,
+        [
+          {
+            name  = "SECRET_NAME"
+            value = var.secret_name
+          },
+          {
+            name  = "AWS_REGION"
+            value = var.aws_region
+          }
+        ]
+      )
 
       logConfiguration = {
         logDriver = "awsfirelens"

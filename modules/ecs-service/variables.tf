@@ -48,3 +48,7 @@ variable "log_group_name" {
 #   description = "url for loki"
 #   type        = string
 # }
+variable "secret_name" {
+  type        = string
+  description = "The name of the existing secret"
+}
