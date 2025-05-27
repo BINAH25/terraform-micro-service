@@ -88,11 +88,106 @@ module "flask_db_replica" {
   region = var.region
 }
 
+# Route 53
+module "route53_recovery" {
+  source = "../modules/route53"
+
+  domain_name         = var.domain_name
+  alb_dns_name        = module.frontend_alb.alb_dns_name
+  alb_zone_id         = module.frontend_alb.alb_zone_id
+  failover_role       = "SECONDARY"
+  create_health_check = true
+  health_check_fqdn   = module.frontend_alb.alb_dns_name
+  create_www          = false
+}
+
+
+module "djando_domain" {
+  source = "../modules/subdomain"
+  domain_name = var.domain_name
+  subdomain = "django.seyram.site"
+  alb_zone_id = module.django_alb.alb_zone_id
+  alb_dns_name = module.django_alb.alb_dns_name
+  create_health_check = true
+  failover_role       = "SECONDARY"
+  health_check_fqdn   = module.django_alb.alb_dns_name
+}
+
+module "flask_domain" {
+  source = "../modules/subdomain"
+  domain_name = var.domain_name
+  subdomain = "flask.seyram.site"
+  alb_zone_id = module.flask_alb.alb_zone_id
+  alb_dns_name = module.flask_alb.alb_dns_name
+  create_health_check = true
+  failover_role       = "SECONDARY"
+  health_check_fqdn   = module.flask_alb.alb_dns_name
+}
+
+
+# create load balancer for the services
+module "frontend_alb" {
+  source            = "../modules/alb"
+  name              = "my-frontend-alb"
+  security_groups   = [module.security_group.frontend_alb_sg_name]
+  subnets           = module.vpc.micro_service_project_public_subnets
+  vpc_id            = module.vpc.micro_service_project_vpc
+  target_group_name = "my-frontend-tg"
+  health_check_path = "/"
+  acm_cert_arn      = module.acm_recovery_main.acm_cert_arn
+}
+
+# Load balancer
+module "django_alb" {
+  source            = "../modules/alb"
+  name              = "my-django-alb"
+  security_groups   = [module.security_group.djando_alb_sg_name]
+  subnets           = module.vpc.micro_service_project_public_subnets
+  vpc_id            = module.vpc.micro_service_project_vpc
+  target_group_name = "my-django-tg"
+  target_group_port = 8000
+  health_check_path = "/api/products"
+  acm_cert_arn      = module.acm_django.acm_cert_arn
+}
+
+module "flask_alb" {
+  source            = "../modules/alb"
+  name              = "my-flask-alb"
+  security_groups   = [module.security_group.flask_alb_sg_name]
+  subnets           = module.vpc.micro_service_project_public_subnets
+  vpc_id            = module.vpc.micro_service_project_vpc
+  target_group_name = "my-flask-tg"
+  target_group_port = 5000
+  health_check_path = "/ready"
+  acm_cert_arn      = module.acm_flask.acm_cert_arn
+}
+
+# certificate
+module "acm_recovery_main" {
+  source = "../modules/acm_recovery"
+
+  domain_name        = var.domain_name
+  alternative_names  = var.alternative_names
+}
+
+module "acm_django" {
+  source = "../modules/acm_recovery"
+
+  domain_name       = "django.seyram.site"
+  alternative_names = []
+}
+
+module "acm_flask" {
+  source = "../modules/acm_recovery"
+  domain_name       = "flask.seyram.site"
+  alternative_names = []
+}
+
 
 # create ecs services 
 module "frontend" {
   source               = "../modules/ecs-service"
-  name                 = "frontend"
+  name                 = "frontend-recovery"
   family               = "service-one-task"
   cpu                  = "256"
   memory               = "512"
@@ -112,7 +207,7 @@ module "frontend" {
 
 module "django_service" {
   source               = "../modules/ecs-service"
-  name                 = "django"
+  name                 = "django-recovery"
   family               = "admin-service-task"
   cpu                  = "256"
   memory               = "512"
@@ -126,14 +221,14 @@ module "django_service" {
   enable_load_balancer = true
   aws_region           = var.region
   target_group_arn     = module.django_alb.target_group_arn
-  depends_on = [ module.django_db ]
+  depends_on = [ module.django_db_replica ]
 }
 
 
 
 module "django_queue" {
   source               = "../modules/ecs-service"
-  name                 = "django-queue"
+  name                 = "django-queue-recovery"
   family               = "admin-queue-service-task"
   cpu                  = "256"
   memory               = "512"
@@ -152,7 +247,7 @@ module "django_queue" {
 
 module "flask_service" {
   source               = "../modules/ecs-service"
-  name                 = "flask"
+  name                 = "flask-recovery"
   family               = "user-service-task"
   cpu                  = "256"
   memory               = "512"
@@ -166,13 +261,13 @@ module "flask_service" {
   enable_load_balancer = true
   aws_region           = var.region
   target_group_arn     = module.flask_alb.target_group_arn
-  depends_on = [ module.flask_db ]
+  depends_on = [ module.flask_db_replica ]
 }
 
 
 module "flask_queue" {
   source               = "../modules/ecs-service"
-  name                 = "flask-queue"
+  name                 = "flask-queue-recovery"
   family               = "user-queue-service-task"
   cpu                  = "256"
   memory               = "512"
@@ -190,6 +285,6 @@ module "flask_queue" {
 
 
 module "monitoring_primary" {
-  source = "../modeules/monitoring"
+  source = "../modules/monitoring"
   health_check_id = data.terraform_remote_state.primary.outputs.health_check_id
 }
