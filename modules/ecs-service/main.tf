@@ -140,7 +140,7 @@ resource "aws_ecs_service" "cluster_service" {
   network_configuration {
     subnets         = var.subnets
     security_groups = var.security_groups
-    assign_public_ip = true
+    assign_public_ip =  var.assign_public_ip
   }
 
   dynamic "load_balancer" {

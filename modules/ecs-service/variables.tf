@@ -52,3 +52,7 @@ variable "secret_name" {
   type        = string
   description = "The name of the existing secret"
 }
+variable "assign_public_ip" {
+  default = false
+  type = bool
+}

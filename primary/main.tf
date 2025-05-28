@@ -223,7 +223,7 @@ module "frontend" {
   container_image      = "${module.ecr_repos["frontend-service"].repository_url}:latest"
   container_port       = 80
   cluster_id           = module.ecs_cluster.cluster_id
-  subnets              = module.vpc.micro_service_project_public_subnets
+  subnets              = slice(module.vpc.micro_service_project_private_subnets, 0, 2)
   security_groups      = [module.security_group.frontend_service_sg_name]
   desired_count        = 1
   enable_load_balancer = true
