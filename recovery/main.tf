@@ -199,6 +199,7 @@ module "frontend" {
   security_groups      = [module.security_group.frontend_service_sg_name]
   desired_count        = 0
   enable_load_balancer = true
+  secret_name = ""
   aws_region           = var.region
   target_group_arn     = module.frontend_alb.target_group_arn
 }
@@ -220,6 +221,7 @@ module "django_service" {
   desired_count        = 0
   enable_load_balancer = true
   aws_region           = var.region
+  secret_name = var.django_secret
   target_group_arn     = module.django_alb.target_group_arn
   depends_on = [ module.django_db_replica ]
 }
@@ -239,6 +241,7 @@ module "django_queue" {
   security_groups      = [module.security_group.django_service_sg_name]
   desired_count        = 0
   enable_load_balancer = false
+  secret_name = var.django_secret
   aws_region           = var.region
   target_group_arn     = module.django_alb.target_group_arn
   depends_on = [ module.django_service ]
@@ -260,6 +263,7 @@ module "flask_service" {
   desired_count        = 0
   enable_load_balancer = true
   aws_region           = var.region
+  secret_name = var.flask_secret
   target_group_arn     = module.flask_alb.target_group_arn
   depends_on = [ module.flask_db_replica ]
 }
@@ -279,6 +283,7 @@ module "flask_queue" {
   desired_count        = 0
   enable_load_balancer = false
   aws_region           = var.region
+  secret_name = var.flask_secret
   target_group_arn     = module.flask_alb.target_group_arn
   depends_on = [ module.flask_service ]
 }
@@ -287,4 +292,12 @@ module "flask_queue" {
 module "monitoring_primary" {
   source = "../modules/monitoring"
   health_check_id = data.terraform_remote_state.primary.outputs.health_check_id
+}
+
+
+module "lambda_failover" {
+  source = "../modules/lambda"
+  sns_topic_arn = module.monitoring_primary.sns_topic_arn
+  lambda_file     = "../scripts/lambda.zip"         
+  lambda_hash     = filebase64sha256("../scripts/lambda.zip")
 }

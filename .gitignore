@@ -1,8 +1,12 @@
-./primary/terraform.tfvars
+./primary/terraform.tfvars/
 ./primary/.terraform/
 primary/.terraform/
+primary/terraform.tfvars/
 
 
-./recovery/terraform.tfvars
+
+./recovery/terraform.tfvars/
+recovery/terraform.tfvars/
+
 ./recovery/.terraform/
 recovery/.terraform/
