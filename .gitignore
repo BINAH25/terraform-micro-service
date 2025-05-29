@@ -10,3 +10,4 @@ recovery/terraform.tfvars/
 
 ./recovery/.terraform/
 recovery/.terraform/
+*.tfvars
