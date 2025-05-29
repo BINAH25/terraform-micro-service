@@ -247,7 +247,6 @@ module "django_queue" {
   depends_on = [ module.django_service ]
 }
 
-
 module "flask_service" {
   source               = "../modules/ecs-service"
   name                 = "flask-recovery"
