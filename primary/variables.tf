@@ -142,3 +142,15 @@ variable "ec2_sg_name" {
   type = string
 
 }
+
+variable "jeager_url" {
+  type = string
+}
+
+variable "jeager_port" {
+  
+}
+
+variable "rabbit_mq_url" {
+  type = string
+}

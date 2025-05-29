@@ -227,6 +227,9 @@ module "frontend" {
   security_groups      = [module.security_group.frontend_service_sg_name]
   desired_count        = 1
   enable_load_balancer = true
+  jeager_port = var.jeager_port
+  jeager_url = var.jeager_url
+  rabbit_mq_url = var.rabbit_mq_url
   secret_name = ""
   aws_region           = var.region
   target_group_arn     = module.frontend_alb.target_group_arn
@@ -248,6 +251,9 @@ module "django_service" {
   security_groups      = [module.security_group.django_service_sg_name]
   desired_count        = 1
   enable_load_balancer = true
+  jeager_port = var.jeager_port
+  jeager_url = var.jeager_url
+  rabbit_mq_url = var.rabbit_mq_url
   aws_region           = var.region
   secret_name = var.django_secret
   target_group_arn     = module.django_alb.target_group_arn
@@ -269,6 +275,9 @@ module "django_queue" {
   security_groups      = [module.security_group.django_service_sg_name]
   desired_count        = 1
   enable_load_balancer = false
+  jeager_port = var.jeager_port
+  jeager_url = var.jeager_url
+  rabbit_mq_url = var.rabbit_mq_url
   aws_region           = var.region
   secret_name = var.django_secret
   target_group_arn     = module.django_alb.target_group_arn
@@ -290,6 +299,9 @@ module "flask_service" {
   security_groups      = [module.security_group.flask_service_sg_name]
   desired_count        = 1
   enable_load_balancer = true
+  jeager_port = var.jeager_port
+  jeager_url = var.jeager_url
+  rabbit_mq_url = var.rabbit_mq_url
   aws_region           = var.region
   secret_name = var.flask_secret
   target_group_arn     = module.flask_alb.target_group_arn
@@ -310,6 +322,9 @@ module "flask_queue" {
   security_groups      = [module.security_group.flask_service_sg_name]
   desired_count        = 1
   enable_load_balancer = false
+  jeager_port = var.jeager_port
+  jeager_url = var.jeager_url
+  rabbit_mq_url = var.rabbit_mq_url
   aws_region           = var.region
   secret_name = var.flask_secret
   target_group_arn     = module.flask_alb.target_group_arn

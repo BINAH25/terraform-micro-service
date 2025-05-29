@@ -104,6 +104,18 @@ resource "aws_ecs_task_definition" "micro_service_td" {
           {
             name  = "AWS_REGION"
             value = var.aws_region
+          },
+          {
+            name  = "JAEGAR_URL"
+            value = var.jeager_url
+          },
+          {
+            name  = "JAEGAR_PORT"
+            value = var.jeager_port
+          },
+          {
+            name  = "RABBIT_MQ_URL"
+            value = var.rabbit_mq_url
           }
         ]
       )
