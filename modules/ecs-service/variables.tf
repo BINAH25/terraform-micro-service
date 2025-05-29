@@ -52,3 +52,16 @@ variable "secret_name" {
   type        = string
   description = "The name of the existing secret"
 }
+variable "jeager_port" {
+  
+}
+variable "jeager_url" {
+  type = string
+}
+variable "rabbit_mq_url" {
+  type = string
+}
+variable "assign_public_ip" {
+  type = bool
+  default = false
+}
